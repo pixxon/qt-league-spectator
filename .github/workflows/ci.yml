@@ -1,0 +1,80 @@
+name: ci
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: windows-2019
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Download Inno Setup
+      if: steps.cache-inno_setup-6_1_2_4.outputs.cache-hit != 'true'
+      run: |
+        curl -kLO https://github.com/portapps/innosetup-portable/releases/download/6.1.2-4/innosetup-portable-win32-6.1.2-4.7z -f --retry 5 -z innosetup-portable-win32-6.1.2-4.7z
+        7z x innosetup-portable-win32-6.1.2-4.7z -o${{github.workspace}}/deps/inno-setup
+
+    - name: Install conan
+      run: python -m pip install conan
+
+    - name: Install deps
+      run: conan install ${{github.workspace}} --install-folder ${{github.workspace}}/build --build missing
+
+    - name: Build
+      run: conan build ${{github.workspace}} --build-folder ${{github.workspace}}/build
+
+    - name: Package
+      run: conan package ${{github.workspace}} --build-folder ${{github.workspace}}/build --package-folder ${{github.workspace}}/package
+
+    - name: Create Release name
+      id: create_release_name
+      run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.create_release_name.outputs.sha_short }}
+        release_name: Release ${{ steps.create_release_name.outputs.sha_short }}
+        body: |
+          Changes in this Release
+          - First Change
+          - Second Change
+        draft: false
+        prerelease: false
+
+    - name: Prepare Release Asset
+      run: 7z a ${{github.workspace}}/qt-league-spectator-${{ steps.create_release_name.outputs.sha_short }}.zip ${{github.workspace}}/package/*
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{github.workspace}}/qt-league-spectator-${{ steps.create_release_name.outputs.sha_short }}.zip
+        asset_name: qt-league-spectator-${{ steps.create_release_name.outputs.sha_short }}.zip
+        asset_content_type: application/zip
+    
+    - name: Prepare Release Installer
+      run: ${{github.workspace}}/deps/inno-setup/app/ISCC.exe ${{github.workspace}}/build/installer.generated.iss /O${{github.workspace}} /F"qt-league-spectator-${{ steps.create_release_name.outputs.sha_short }}-windows-installer"
+
+    - name: Upload Release Installer
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{github.workspace}}/qt-league-spectator-${{ steps.create_release_name.outputs.sha_short }}-windows-installer.exe
+        asset_name: qt-league-spectator-${{ steps.create_release_name.outputs.sha_short }}-windows-installer.exe
+        asset_content_type: application/octet-stream7z
