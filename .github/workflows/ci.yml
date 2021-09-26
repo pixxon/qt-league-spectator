@@ -8,6 +8,8 @@ on:
 
 env:
   BUILD_TYPE: Release
+  CONAN_USER_HOME: "${{ github.workspace }}/release/"
+  CONAN_USER_HOME_SHORT: "${{ github.workspace }}/release/short"
 
 jobs:
   build:
@@ -25,7 +27,17 @@ jobs:
     - name: Install conan
       run: python -m pip install conan
 
-    - name: Install deps
+    - name: Cache Depedencies
+      id: cache-conan
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-conan-modules
+      with:
+        path: ${{ env.CONAN_USER_HOME }}
+        key: ${{ runner.os }}-builder-${{ env.cache-name }}-${{ hashFiles('conanfile.py') }}
+        restore-keys: ${{ runner.os }}-builder-${{ env.cache-name }}-
+
+    - name: Install Depedencies
       run: conan install ${{github.workspace}} --install-folder ${{github.workspace}}/build --build missing
 
     - name: Build
