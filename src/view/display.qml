@@ -57,6 +57,7 @@ Window {
 			color: "red"
 			width: (window.width - windowModel.gap) / 2
 			height: window.height
+			padding: windowModel.margin
 		}
 	}
 }
