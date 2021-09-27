@@ -11,24 +11,46 @@ find_package(Qt6 COMPONENTS Core Gui Quick QuickControls2 REQUIRED CONFIG)
 
 include(windeployqt)
 
+qt6_add_resources(QRC_SOURCES
+	src/view/view.qrc
+)
+
 qt6_wrap_cpp(MOC_SOURCES
-    src/rasterwindow.h
+	src/model/playerspectator.hpp
+	src/viewmodel/data.hpp
+	src/viewmodel/players.hpp
+	src/viewmodel/window.hpp
 )
 
 set(HEADERS
-    src/rasterwindow.h
+	src/persistance/player.hpp
+	src/persistance/playerdatabase.hpp
+	src/model/playerspectator.hpp
+	src/viewmodel/data.hpp
+	src/viewmodel/players.hpp
+	src/viewmodel/window.hpp
 )
 
 set(SOURCES
+	src/persistance/playerdatabase.cpp
+	src/model/playerspectator.cpp
+	src/viewmodel/data.cpp
+	src/viewmodel/players.cpp
+	src/viewmodel/window.cpp
 	src/main.cpp
-	src/rasterwindow.cpp
 )
 
 add_executable(qt-league-spectator
 	WIN32
+    ${QRC_SOURCES}
 	${MOC_SOURCES}
 	${HEADERS}
 	${SOURCES}
+)
+
+target_include_directories(qt-league-spectator
+PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 target_compile_features(qt-league-spectator

@@ -12,6 +12,7 @@ function(windeployqt target directory)
                 --verbose 0
                 --no-compiler-runtime
                 --no-opengl-sw
+                --qmldir "${CMAKE_SOURCE_DIR}/src"
                 \"$<TARGET_FILE:${target}>\"
     )
 
@@ -22,24 +23,13 @@ function(windeployqt target directory)
         execute_process(
             COMMAND \"${CMAKE_COMMAND}\" -E
                 env PATH=\"${_qt_bin_dir}\" \"${WINDEPLOYQT_EXECUTABLE}\"
-                    --dry-run
                     --no-compiler-runtime
                     --no-opengl-sw
                     --list mapping
+                    --qmldir \"${CMAKE_SOURCE_DIR}/src\"
+                    --dir \"\${CMAKE_INSTALL_PREFIX}/${directory}\"
                     \$<TARGET_FILE:${target}>
-            OUTPUT_VARIABLE _output
-            OUTPUT_STRIP_TRAILING_WHITESPACE
         )
-        separate_arguments(_files WINDOWS_COMMAND \${_output})
-        while(_files)
-            list(GET _files 0 _src)
-            list(GET _files 1 _dest)
-            execute_process(
-                COMMAND \"${CMAKE_COMMAND}\" -E
-                    copy \${_src} \"\${CMAKE_INSTALL_PREFIX}/${directory}/\${_dest}\"
-            )
-            list(REMOVE_AT _files 0 1)
-        endwhile()
         "
     )
 
