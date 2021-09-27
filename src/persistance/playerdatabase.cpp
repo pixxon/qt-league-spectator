@@ -26,10 +26,9 @@ PlayerDatabase::PlayerDatabase(QString path)
 	QJsonParseError errorPtr;
 	QJsonDocument doc = QJsonDocument::fromJson(data, &errorPtr);
 	if (doc.isNull()) {
-		qDebug() << "Parse failed";
+		return;
 	}
 	QJsonArray ptsArray = doc.array();
-	qDebug() << "There are " << ptsArray.size() << "sets of points in the json file";
 	for(const QJsonValue& val : ptsArray) {
 		QString proName = val.toObject().value("proName").toString();
 		QString summonerName = val.toObject().value("summonerName").toString();
