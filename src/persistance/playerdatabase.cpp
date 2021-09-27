@@ -7,6 +7,7 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QJsonObject>
+#include <algorithm>
 
 PlayerDatabase::PlayerDatabase()
 {
@@ -52,7 +53,8 @@ PlayerDatabase::~PlayerDatabase()
 		QJsonObject obj;
 		obj.insert("summonerName", it.key());
 		obj.insert("proName", it.value());
-		ptsArray.append(obj);
+		
+		ptsArray.insert(std::upper_bound(ptsArray.begin(), ptsArray.end(), obj, [](const auto& a, const auto& b){ return a.value("proName").toString() < b.toObject().value("proName").toString();  }), obj);
 	}
 
 	QJsonDocument doc(ptsArray);
