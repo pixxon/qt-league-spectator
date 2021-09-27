@@ -154,7 +154,57 @@ Window {
 					windowModel.path = backgroundDialog.file;
 				}
 			}
-		}		
+		}
+
+		Row {
+			id: colorRow
+
+			Rectangle {
+				id: bluecolorRect
+				color: windowModel.blueColor
+				width: (window.width / 2) - bluecolorButton.width
+				height: colorRow.height
+			}
+
+			Button {
+				id: bluecolorButton
+				text: "Change Blue side color"
+				onClicked: {
+					bluecolorDialog.open()
+				}
+				width: 200
+			}
+			
+			ColorDialog {
+				id: bluecolorDialog
+				onAccepted: {
+					windowModel.blueColor = bluecolorDialog.color;
+				}
+			}
+
+			Rectangle {
+				id: redcolorRect
+				color: windowModel.redColor
+				width: (window.width / 2) - backgroundButton.width
+				height: colorRow.height
+			}
+
+			Button {
+				id: redcolorButton
+				text: "Change Red side color"
+				onClicked: {
+					redcolorDialog.open()
+				}
+				width: 200
+			}
+			
+			ColorDialog {
+				id: redcolorDialog
+				onAccepted: {
+					windowModel.redColor = redcolorDialog.color;
+				}
+			}
+		}
 
 		ToolSeparator {
 			orientation: Qt.Horizontal

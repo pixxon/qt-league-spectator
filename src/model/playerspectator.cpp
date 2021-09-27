@@ -20,29 +20,28 @@ PlayerSpectator::PlayerSpectator(QObject* parent)
 			const auto data = reply->readAll();
 			QJsonParseError errorPtr;
 			QJsonDocument doc = QJsonDocument::fromJson(data, &errorPtr);
-			if (doc.isNull()) {
-				qDebug() << "Parse failed";
-			}
-			QJsonObject content = doc.object();
-			QJsonArray allPlayers = content.value("allPlayers").toArray();
+			if (!doc.isNull()) {
+				QJsonObject content = doc.object();
+				QJsonArray allPlayers = content.value("allPlayers").toArray();
 
-			mRedPlayers.clear();
-			mBluePlayers.clear();
+				mRedPlayers.clear();
+				mBluePlayers.clear();
 
-			for(const QJsonValue& player : allPlayers) {
-				QString summonerName = player.toObject().value("summonerName").toString();
-				QString championName = player.toObject().value("championName").toString();
-				QString team = player.toObject().value("team").toString();
+				for(const QJsonValue& player : allPlayers) {
+					QString summonerName = player.toObject().value("summonerName").toString();
+					QString championName = player.toObject().value("championName").toString();
+					QString team = player.toObject().value("team").toString();
 
-				auto it = db.playerMapping.find(summonerName);
-				if (it != db.playerMapping.end())
-				{
-					auto& players = (team == "ORDER" ? mBluePlayers : mRedPlayers);
-					players.append(Player{it.value(), championName});
+					auto it = db.playerMapping.find(summonerName);
+					if (it != db.playerMapping.end())
+					{
+						auto& players = (team == "ORDER" ? mBluePlayers : mRedPlayers);
+						players.append(Player{it.value(), championName});
+					}
 				}
-			}
 
-			playersChanged();
+				playersChanged();
+			}
 
 			mTimer.start(1000);
 		});

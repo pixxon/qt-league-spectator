@@ -34,7 +34,7 @@ Window {
 			fontSizeMode: Text.Fit
 			minimumPixelSize: 10
 			font.pixelSize: 72
-			color: "blue"
+			color: windowModel.blueColor
 			width: (window.width - windowModel.gap) / 2
 			height: window.height
 			padding: windowModel.margin
@@ -54,7 +54,7 @@ Window {
 			fontSizeMode: Text.Fit
 			minimumPixelSize: 10
 			font.pixelSize: 72
-			color: "red"
+			color: windowModel.redColor
 			width: (window.width - windowModel.gap) / 2
 			height: window.height
 			padding: windowModel.margin

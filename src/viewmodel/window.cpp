@@ -10,6 +10,8 @@ Window::Window()
 	mGap = mySettings.value("windowgap", 100).toInt();
 	mMargin = mySettings.value("windowmargin", 100).toInt();
 	mPath = mySettings.value("backgroundFile").toString();
+	mBlueColor = mySettings.value("blueColor", QColorConstants::Blue).value<QColor>();
+	mRedColor = mySettings.value("redColor", QColorConstants::Red).value<QColor>();
 }
 
 int Window::windowWidth() const
@@ -35,6 +37,16 @@ int Window::margin() const
 QString Window::path() const
 {
 	return mPath;
+}
+
+QColor Window::blueColor() const
+{
+	return mBlueColor;
+}
+
+QColor Window::redColor() const
+{
+	return mRedColor;
 }
 
 void Window::setWindowWidth(int windowWidth)
@@ -80,4 +92,22 @@ void Window::setPath(QString path)
 
 	QSettings mySettings;
 	mySettings.setValue("backgroundFile", mPath);
+}
+
+void Window::setBlueColor(QColor blueColor)
+{
+	mBlueColor = blueColor;
+	blueColorChanged(mBlueColor);
+
+	QSettings mySettings;
+	mySettings.setValue("blueColor", mBlueColor);
+}
+
+void Window::setRedColor(QColor redColor)
+{
+	mRedColor = redColor;
+	redColorChanged(mRedColor);
+
+	QSettings mySettings;
+	mySettings.setValue("redColor", mRedColor);
 }

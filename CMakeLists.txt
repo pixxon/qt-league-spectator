@@ -7,7 +7,7 @@ project(qt-league-spectator
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-find_package(Qt6 COMPONENTS Core Gui Quick QuickControls2 REQUIRED CONFIG)
+find_package(Qt6 COMPONENTS Core Gui Quick QuickControls2 Widgets REQUIRED CONFIG)
 
 include(windeployqt)
 
@@ -64,6 +64,7 @@ PUBLIC
 	Qt6::Gui
 	Qt6::Quick
 	Qt6::QuickControls2
+	Qt6::Widgets
 	dxgi
 	dxguid
 	d3d11

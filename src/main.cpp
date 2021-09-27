@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 
 #include "persistance/playerdatabase.hpp"
@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("pixxont");
     QCoreApplication::setApplicationName("qt-league-spectator");
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     PlayerSpectator ps;
 
